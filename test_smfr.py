@@ -3,6 +3,7 @@ import smfr
 from sklearn import datasets
 import pandas as pd
 from ggplot import *
+import matplotlib.pyplot as plt
 
 # The digits dataset
 # digits = datasets.load_digits()
@@ -30,10 +31,7 @@ y = np.dot(X, np.dot(A,B))
 
 lambda_1 = 0.1
 lambda_2 = 0.1
-epsilon = 0.001
-
-print (0.5)*np.power(np.linalg.norm(y - np.dot(X, np.dot(A, B)), ord='fro'), 2) + lambda_1*np.sum(np.abs(A)) + lambda_2*np.sum(np.abs(B))
-  
+epsilon = 0.0001  
 
 # Initialize the SMFR problem
 model = smfr.SMFR(X, y, lambda_1, lambda_2, m, epsilon)
@@ -55,10 +53,17 @@ print np.dot(A,B)
 print"modelA dot modelB"
 print np.dot(model.A, model.B)
 
-f_ABs = pd.DataFrame(model.f_ABs)
-delta_f_ABs = pd.DataFrame(model.delta_f_ABs)
+f_ABs = pd.DataFrame(model.f_ABs, columns=["f_AB"])
+f_ABs["iteration"] = f_ABs.index
+delta_f_ABs = pd.DataFrame(model.delta_f_ABs, columns=["delta_f_AB"])
+delta_f_ABs["iteration"] = delta_f_ABs.index
+
 print f_ABs
 print delta_f_ABs
 
-p = ggplot(aes(x='Iteration', y='0'), data=f_ABs)
+print (0.5)*np.power(np.linalg.norm(y - np.dot(X, np.dot(A, B)), ord='fro'), 2) + lambda_1*np.sum(np.abs(A)) + lambda_2*np.sum(np.abs(B))
+
+p = ggplot(aes(x='iteration', y='f_AB'), data=f_ABs)
+print p + geom_point() + geom_line() + stat_smooth(color='blue')
+p = ggplot(aes(x='iteration', y='delta_f_AB'), data=delta_f_ABs)
 print p + geom_point() + geom_line() + stat_smooth(color='blue')
