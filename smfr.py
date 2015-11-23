@@ -16,28 +16,28 @@ class SMFR:
 		# y: n x q = num_data_points x num_stations
 		# A: p x m = num_features x rank
 		# B: m x q = rank x num_stations
-		self.X 					= X
-		self.y 					= y
-		self.lambda_1 			= lambda_1
-		self.lambda_2 			= lambda_2
-		self.epsilon 			= epsilon
-		self.m 					= m
-		self.num_data_points 	= X.shape[0]
-		self.num_features 		= X.shape[1]
-		self.num_stations 		= y.shape[1]
+		self.X = X
+		self.y = y
+		self.lambda_1 = lambda_1
+		self.lambda_2 = lambda_2
+		self.epsilon = epsilon
+		self.m = m
+		self.num_data_points = X.shape[0]
+		self.num_features = X.shape[1]
+		self.num_stations = y.shape[1]
 
 		# Need to initialize our weight matrices A and B, A0, B0 will be random N(0,1).
-		self.A 					= np.random.rand(self.num_features, self.m)
-		self.B 					= np.random.rand(self.m, self.num_stations)
+		self.A = np.random.rand(self.num_features, self.m)
+		self.B = np.random.rand(self.m, self.num_stations)
 		
 		# Initiallizing the evaluation value, this will always be the previous value		
-		self.f_of_A_B 			= (0.5)*np.power(np.linalg.norm(self.y - np.dot(self.X, np.dot(self.A, self.B)), ord='fro'), 2) \
-			 						+ self.lambda_1*np.sum(np.abs(self.A)) \
-									+ self.lambda_2*np.sum(np.abs(self.B))		
+		self.f_of_A_B = (0.5)*np.power(np.linalg.norm(self.y - np.dot(self.X, np.dot(self.A, self.B)), ord='fro'), 2) \
+			 				+ self.lambda_1*np.sum(np.abs(self.A)) \
+							+ self.lambda_2*np.sum(np.abs(self.B))		
   		
 		# Needed data for visualization
-		self.f_ABs 				= []
-		self.delta_f_ABs 		= []
+		self.f_ABs = []
+		self.delta_f_ABs = []
   
 	# Build our model to predict.
 	def fit(self):
@@ -46,8 +46,8 @@ class SMFR:
 		while True:
 		
 			# With each iteration's change of the m value we need to initialize our weight matrices A and B, A0, B0 will be random N(0,1).
-			self.A 	= np.random.rand(self.num_features, self.m)
-			self.B 	= np.random.rand(self.m, self.num_stations)
+			self.A = np.random.rand(self.num_features, self.m)
+			self.B = np.random.rand(self.m, self.num_stations)
 		
 			# Perform first update before doing a has_converged check
 			self.update_argmin_matrix_B()
@@ -101,10 +101,10 @@ class SMFR:
 	def update_argmin_matrix_B(self):
 		
 		# Define variables needed for cvxpy and then define the problem with no constraints
-		XA 			= self.X.dot(self.A)
-		Bv 			= cvx.Variable(self.m, self.num_stations)
-		objective 	= cvx.Minimize( 0.5*cvx.sum_squares(self.y - XA*Bv) + self.lambda_1*cvx.norm(Bv, 1) )
-		prob 		= cvx.Problem(objective)
+		XA = self.X.dot(self.A)
+		Bv = cvx.Variable(self.m, self.num_stations)
+		objective = cvx.Minimize( 0.5*cvx.sum_squares(self.y - XA*Bv) + self.lambda_1*cvx.norm(Bv, 1) )
+		prob = cvx.Problem(objective)
 		
 		# Solve the problem with SCS and make sure it converged
 		prob.solve(solver=cvx.SCS)
@@ -118,9 +118,9 @@ class SMFR:
 	def update_argmin_matrix_A(self):
 		
 		# Define variables needed for cvxpy and then define the problem with no constraints
-		Av 			= cvx.Variable(self.num_features, self.m)
-		objective 	= cvx.Minimize( 0.5*cvx.sum_squares(self.y - self.X*Av*self.B) + self.lambda_1*cvx.norm(Av,1) )
-		prob 		= cvx.Problem(objective)
+		Av = cvx.Variable(self.num_features, self.m)
+		objective = cvx.Minimize( 0.5*cvx.sum_squares(self.y - self.X*Av*self.B) + self.lambda_1*cvx.norm(Av,1) )
+		prob = cvx.Problem(objective)
 		
 		# Solve the problem with SCS and make sure it converged
 		prob.solve(solver=cvx.SCS)
