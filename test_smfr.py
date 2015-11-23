@@ -18,7 +18,7 @@ np.random.seed(0)
 num_data_points = 50
 num_features = 12
 num_stations = 20
-m = 5
+m = 10
 
 X = np.random.rand(num_data_points, num_features)
 # y = np.random.rand(num_data_points, num_stations)
@@ -31,7 +31,7 @@ y = np.dot(X, np.dot(A,B))
 
 lambda_1 = 0.1
 lambda_2 = 0.1
-epsilon = 0.0001  
+epsilon = 0.001  
 
 # Initialize the SMFR problem
 model = smfr.SMFR(X, y, lambda_1, lambda_2, m, epsilon)
@@ -39,19 +39,19 @@ model = smfr.SMFR(X, y, lambda_1, lambda_2, m, epsilon)
 # Fit the model
 model.fit()
 
-print "model.A:"
-print model.A
-print "A:"
-print A
-print "model.B:"
-print model.B
-print "B:"
-print B
-
-print "AB"
-print np.dot(A,B)
-print"modelA dot modelB"
-print np.dot(model.A, model.B)
+# print "model.A:"
+# print model.A
+# print "A:"
+# print A
+# print "model.B:"
+# print model.B
+# print "B:"
+# print B
+#
+# print "AB"
+# print np.dot(A,B)
+# print"modelA dot modelB"
+# print np.dot(model.A, model.B)
 
 f_ABs = pd.DataFrame(model.f_ABs, columns=["f_AB"])
 f_ABs["iteration"] = f_ABs.index

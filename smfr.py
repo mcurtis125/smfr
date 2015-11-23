@@ -42,25 +42,35 @@ class SMFR:
 	# Build our model to predict.
 	def fit(self):
         
-		# Perform first update before doing a has_converged check
-		self.update_argmin_matrix_B()
-		self.update_argmin_matrix_A()
+		# This loop will be broken once we have eliminated all repeating linear combinations of rows of A and B, i.e. decreased m as much as possible
+		while True:
 		
-		# Iterate until our f(A,B) is inside the epislon, Note that has_converged also updates the f_of_A_B value.
-		while self.has_converged() == False:
-			
+			# With each iteration's change of the m value we need to initialize our weight matrices A and B, A0, B0 will be random N(0,1).
+			self.A 	= np.random.rand(self.num_features, self.m)
+			self.B 	= np.random.rand(self.m, self.num_stations)
+		
+			# Perform first update before doing a has_converged check
 			self.update_argmin_matrix_B()
 			self.update_argmin_matrix_A()
+		
+			# Iterate until our f(A,B) is inside the epislon, Note that has_converged also updates the f_of_A_B value.
+			while self.has_converged() == False:
+			
+				self.update_argmin_matrix_B()
+				self.update_argmin_matrix_A()
             
-		# When our function has convereged we have our final A, B values.
-		A_rank = np.linalg.matrix_rank(self.A)
-		B_rank = np.linalg.matrix_rank(self.B)
+			# When our function has convereged we have our final A, B values.
+			A_rank = np.linalg.matrix_rank(self.A)
+			B_rank = np.linalg.matrix_rank(self.B)
 
-		# CHECK THIS!!!!!
-		# Not sure why we need to make this subtraction ******
-		if A_rank < self.m or B_rank < self.m:
-			self.m = self.m - 1
-        
+			# check wether or not m is less than the rank of A and B final
+			if  np.linalg.matrix_rank(self.A) < self.m or np.linalg.matrix_rank(self.B) < self.m:
+				self.m = self.m - 1
+			
+			# We break the loop if we can't make m any smaller
+			else:
+				break
+	
 	# This method checks wether or not this iteration has found a f(A,B) such that it is appropriate for a model. ie, its inside epsilon
 	def has_converged(self):
         
@@ -129,4 +139,5 @@ class SMFR:
 		return (0.5)*np.power(np.linalg.norm(self.y - np.dot(self.X, np.dot(self.A, self.B)), ord='fro'), 2) \
 			 	+ self.lambda_1*np.sum(np.abs(self.A)) \
 				+ self.lambda_2*np.sum(np.abs(self.B))
+		
 		
