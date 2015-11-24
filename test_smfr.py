@@ -4,6 +4,7 @@ from sklearn import datasets
 import pandas as pd
 from ggplot import *
 import matplotlib.pyplot as plt
+import scipy.sparse as sparse
 
 # The digits dataset
 # digits = datasets.load_digits()
@@ -19,6 +20,8 @@ num_data_points = 50
 num_features = 12
 num_stations = 20
 m = 10
+
+#print np.ndarray(sparse.rand(5, 5, density=0.1))
 
 X = np.random.rand(num_data_points, num_features)
 # y = np.random.rand(num_data_points, num_stations)

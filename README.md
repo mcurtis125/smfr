@@ -1,4 +1,7 @@
-### Sparse Multivariable Factor Regression
+### Sparse Multivariate Factor Regression
+#### A python implementation of [Sparse Multivariate Factor Regression](http://arxiv.org/abs/1502.07334) - Milad Kharratzadeh, Mark Coates
+
+##### Import needed libraries.
 ```python
 import numpy as np
 import smfr
@@ -34,7 +37,7 @@ print model.A
 print model.B
 print model.m
 ```
-##### We can also make predictions with our model
+##### We can also make predictions with our model.
 ```python
 X_test = np.random.rand(num_data_points, num_features)
 y_test = model.predict(X_test)
