@@ -1,5 +1,5 @@
 ### Sparse Multivariate Factor Regression
-#### A python implementation of [Sparse Multivariate Factor Regression](http://arxiv.org/abs/1502.07334) - Milad Kharratzadeh, Mark Coates
+#### A python implementation of [Sparse Multivariate Factor Regression](http://arxiv.org/abs/1502.07334)
 
 ##### Import needed libraries.
 ```python
