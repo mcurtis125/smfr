@@ -99,40 +99,49 @@ class SMFR:
         
     # In finding matrix B_i+1 we are going to execute a lasso problem for each station
 	def update_argmin_matrix_B(self):
-		
+		print "B update"
 		# Define variables needed for cvxpy and then define the problem with no constraints
 		XA = self.X.dot(self.A)
 		Bv = cvx.Variable(self.m, self.num_stations)
 		objective = cvx.Minimize( 0.5*cvx.sum_squares(self.y - XA*Bv) + self.lambda_1*cvx.norm(Bv, 1) )
 		prob = cvx.Problem(objective)
 		
-		# Solve the problem with SCS and make sure it converged
-		prob.solve(solver=cvx.SCS)
-		if prob.status != cvx.OPTIMAL:
+		# Solve the problem with CVXOPT and make sure it converged
+		prob.solve(solver=cvx.SCS, verbose=True)
+		print cvx.OPTIMAL_INACCURATE
+		print prob.status
+		if prob.status != cvx.OPTIMAL and prob.status != cvx.OPTIMAL_INACCURATE:
 		        raise Exception("Solver did not converge!")
 
 		# Update weighting matrix B
 		self.B = Bv.value
+		print "B update complete"
 		    
     # Here we just execute one lasso to update A
 	def update_argmin_matrix_A(self):
+		
+		print "Starting A update"
 		
 		# Define variables needed for cvxpy and then define the problem with no constraints
 		Av = cvx.Variable(self.num_features, self.m)
 		objective = cvx.Minimize( 0.5*cvx.sum_squares(self.y - self.X*Av*self.B) + self.lambda_1*cvx.norm(Av,1) )
 		prob = cvx.Problem(objective)
 		
-		# Solve the problem with SCS and make sure it converged
-		prob.solve(solver=cvx.SCS)
-		if prob.status != cvx.OPTIMAL:
+		print "prob A initialized"
+		
+		# Solve the problem with CVXOPT and make sure it converged
+		prob.solve(solver=cvx.SCS, verbose=True)
+		if prob.status != cvx.OPTIMAL and prob.status != cvx.OPTIMAL_INACCURATE:
 		        raise Exception("Solver did not converge!")
 
 		# Update A with the solution
 		self.A = Av.value
 		
+		print "update A complete"
+		
 	# Method to predict based on new inputs. prediction = output = y = XAB
-	def predict(self, X):
-		return np.dot(self.X, np.dot(self.A, self.B))
+	def predict(self, X_test):
+		return np.dot(X_test, np.dot(self.A, self.B))
 	
   	# Function that returns our current f_of_A_b evaluation !!! NEED LAMBDAS???
 	def current_evaluation(self):

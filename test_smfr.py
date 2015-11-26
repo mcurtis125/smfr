@@ -67,6 +67,6 @@ print delta_f_ABs
 print (0.5)*np.power(np.linalg.norm(y - np.dot(X, np.dot(A, B)), ord='fro'), 2) + lambda_1*np.sum(np.abs(A)) + lambda_2*np.sum(np.abs(B))
 
 p = ggplot(aes(x='iteration', y='f_AB'), data=f_ABs)
-print p + geom_point() + geom_line() + stat_smooth(color='blue')
+ print p + geom_point() + geom_line() + stat_smooth(color='blue')
 p = ggplot(aes(x='iteration', y='delta_f_AB'), data=delta_f_ABs)
 print p + geom_point() + geom_line() + stat_smooth(color='blue')
